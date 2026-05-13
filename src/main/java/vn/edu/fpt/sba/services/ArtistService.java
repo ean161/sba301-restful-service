@@ -27,8 +27,8 @@ public class ArtistService {
         return this.findById(artist.getId());
     }
 
-    public void update(Artist artist) {
-        artistRepo.findById(artist.getId()).map(item -> {
+    public Artist update(Integer id, Artist artist) {
+        return artistRepo.findById(id).map(item -> {
             item.setName(artist.getName());
             return artistRepo.save(item);
         }).orElseThrow();

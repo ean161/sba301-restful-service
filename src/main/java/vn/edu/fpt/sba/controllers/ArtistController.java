@@ -21,40 +21,39 @@ public class ArtistController {
 
     @GetMapping
     public ResponseEntity<List<Artist>> getList() {
-        return ResponseEntity.status(HttpStatus.OK).body(artistService.findAll());
+        return ResponseEntity.ok().body(artistService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Artist> getById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(artistService.findById(id));
+            return ResponseEntity.ok().body(artistService.findById(id));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
     public ResponseEntity<Artist> insert(@RequestBody Artist artist) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(artistService.insert(artist));
+        return ResponseEntity.ok().body(artistService.insert(artist));
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody Artist artist) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Artist> update(@PathVariable Integer id, @RequestBody Artist artist) {
         try {
-            artistService.update(artist);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.ok().body(artistService.update(id, artist));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.notFound().build();
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             artistService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.notFound().build();
         }
     }
 }
