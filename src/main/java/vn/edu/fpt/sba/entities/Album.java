@@ -1,24 +1,25 @@
 package vn.edu.fpt.sba.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor @AllArgsConstructor
 @Entity
-public class Artist {
+public class Album {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "artist_id")
+    @Column(name = "album_id")
     private Integer id;
 
-    private String name;
+    private String title;
 
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Album> albums;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
 }

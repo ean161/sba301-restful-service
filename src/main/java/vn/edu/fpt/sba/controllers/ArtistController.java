@@ -1,11 +1,11 @@
 package vn.edu.fpt.sba.controllers;
 
-import org.apache.catalina.User;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.edu.fpt.sba.entities.Album;
 import vn.edu.fpt.sba.entities.Artist;
-import vn.edu.fpt.sba.services.ArtistService;
+import vn.edu.fpt.sba.services.impl.AlbumService;
+import vn.edu.fpt.sba.services.impl.ArtistService;
 
 import java.util.List;
 
@@ -14,9 +14,11 @@ import java.util.List;
 public class ArtistController {
 
     private final ArtistService artistService;
+    private final AlbumService albumService;
 
-    public ArtistController(ArtistService artistService) {
+    public ArtistController(ArtistService artistService, AlbumService albumService) {
         this.artistService = artistService;
+        this.albumService = albumService;
     }
 
     @GetMapping
@@ -55,5 +57,10 @@ public class ArtistController {
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/{id}/albums")
+    public ResponseEntity<Album> insertAlbum(@PathVariable Integer id, @RequestBody Album album) {
+        return ResponseEntity.ok().body(albumService.insert(id, album));
     }
 }
