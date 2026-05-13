@@ -5,6 +5,8 @@ import vn.edu.fpt.sba.entities.Album;
 import vn.edu.fpt.sba.repositories.AlbumRepo;
 import vn.edu.fpt.sba.services.IAlbumService;
 
+import java.util.List;
+
 @Service
 public class AlbumService implements IAlbumService {
 
@@ -14,6 +16,15 @@ public class AlbumService implements IAlbumService {
     public AlbumService(AlbumRepo albumRepo, ArtistService artistService) {
         this.albumRepo = albumRepo;
         this.artistService = artistService;
+    }
+
+    public List<Album> findAll() {
+        return albumRepo.findAll();
+    }
+
+    @Override
+    public Album findById(Integer id) {
+        return albumRepo.findById(id).orElseThrow();
     }
 
     @Override
