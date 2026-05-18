@@ -1,5 +1,7 @@
 package vn.edu.fpt.sba.controllers;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import vn.edu.fpt.sba.entities.Artist;
 import vn.edu.fpt.sba.exceptions.AlbumNotFoundException;
 import vn.edu.fpt.sba.exceptions.ArtistNotFoundException;
 import vn.edu.fpt.sba.services.impl.AlbumService;
+import vn.edu.fpt.sba.services.impl.ArtistService;
 import vn.edu.fpt.sba.utils.APIResponse;
 
 import java.util.List;
@@ -30,6 +33,13 @@ public class AlbumController {
     public ResponseEntity<APIResponse> getAll() {
         List<Album> raw = albumService.findAll();
         List<AlbumResponseDTO> list = AlbumService.toAlbumDTOList(raw);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), list));
+    }
+
+    @GetMapping("/paging")
+    public ResponseEntity<APIResponse> getAll(Pageable pageable) {
+        Page<Album> raw = albumService.findAll(pageable);
+        Page<AlbumResponseDTO> list = AlbumService.toAlbumDTOPaging(raw);
         return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), list));
     }
 

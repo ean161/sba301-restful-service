@@ -1,5 +1,12 @@
 package vn.edu.fpt.sba.controllers;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/artists")
+@Tag(name = "Artist APIs", description = "APIs for artist management")
 public class ArtistController {
 
     private final ArtistService artistService;
@@ -28,9 +36,30 @@ public class ArtistController {
     }
 
     @GetMapping
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Found an artist list",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ArtistResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Artist list not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class)
+                    )
+            ),
+    })
     public ResponseEntity<APIResponse> getAll() {
         List<Artist> raw = artistService.findAll();
         List<ArtistResponseDTO> list = ArtistService.toArtistDTOList(raw);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), list));
+    }
+
+    @GetMapping("/paging")
+    public ResponseEntity<APIResponse> getAll(Pageable pageable) {
+        Page<Artist> raw = artistService.findAll(pageable);
+        Page<ArtistResponseDTO> list = ArtistService.toArtistDTOPaging(raw);
         return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), list));
     }
 
