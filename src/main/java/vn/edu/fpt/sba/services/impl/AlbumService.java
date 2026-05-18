@@ -1,7 +1,10 @@
 package vn.edu.fpt.sba.services.impl;
 
 import org.springframework.stereotype.Service;
+import vn.edu.fpt.sba.dto.responses.AlbumDetailsResponseDTO;
+import vn.edu.fpt.sba.dto.responses.AlbumResponseDTO;
 import vn.edu.fpt.sba.entities.Album;
+import vn.edu.fpt.sba.entities.Artist;
 import vn.edu.fpt.sba.repositories.AlbumRepo;
 import vn.edu.fpt.sba.services.IAlbumService;
 
@@ -24,12 +27,43 @@ public class AlbumService implements IAlbumService {
 
     @Override
     public Album findById(Integer id) {
-        return albumRepo.findById(id).orElseThrow();
+        return albumRepo.findById(id).orElse(null);
+    }
+
+    public static List<AlbumResponseDTO> toAlbumDTOList(List<Album> list) {
+        return list.stream().map(AlbumService::toAlbumDTO).toList();
     }
 
     @Override
     public Album insert(Integer artistId, Album album) {
-        album.setArtist(artistService.findById(artistId));
-        return albumRepo.save(album);
+        Artist artist = artistService.findById(artistId);
+        if (artist == null) {
+            return null;
+        }
+
+        album.setArtist(artist);
+        albumRepo.save(album);
+        return this.findById(album.getId());
+    }
+
+    @Override
+    public Album update(Integer id, Album album) {
+        return albumRepo.findById(id).map(item -> {
+            item.setTitle(album.getTitle());
+            return albumRepo.save(item);
+        }).orElse(null);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        albumRepo.deleteById(id);
+    }
+
+    public static AlbumResponseDTO toAlbumDTO(Album album) {
+        return new AlbumResponseDTO(album.getId(), album.getTitle());
+    }
+
+    public static AlbumDetailsResponseDTO toAlbumDetailsDTO(Album album) {
+        return new AlbumDetailsResponseDTO(album.getId(), album.getTitle(), ArtistService.toArtistDTO(album.getArtist()));
     }
 }

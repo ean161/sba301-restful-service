@@ -1,11 +1,17 @@
 package vn.edu.fpt.sba.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.edu.fpt.sba.dto.responses.AlbumDetailsResponseDTO;
+import vn.edu.fpt.sba.dto.responses.ArtistDetailsResponseDTO;
+import vn.edu.fpt.sba.dto.responses.ArtistResponseDTO;
 import vn.edu.fpt.sba.entities.Album;
 import vn.edu.fpt.sba.entities.Artist;
+import vn.edu.fpt.sba.exceptions.ArtistNotFoundException;
 import vn.edu.fpt.sba.services.impl.AlbumService;
 import vn.edu.fpt.sba.services.impl.ArtistService;
+import vn.edu.fpt.sba.utils.APIResponse;
 
 import java.util.List;
 
@@ -22,45 +28,61 @@ public class ArtistController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Artist>> getList() {
-        return ResponseEntity.ok().body(artistService.findAll());
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse getAll() {
+        List<Artist> raw = artistService.findAll();
+        List<ArtistResponseDTO> list = ArtistService.toArtistDTOList(raw);
+        return new APIResponse(HttpStatus.OK.value(), list);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Artist> getById(@PathVariable Integer id) {
-        try {
-            return ResponseEntity.ok().body(artistService.findById(id));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse get(@PathVariable Integer id) {
+        Artist raw = artistService.findById(id);
+        if (raw == null) {
+            throw new ArtistNotFoundException();
         }
+
+        ArtistDetailsResponseDTO artist = ArtistService.toArtistDetailsDTO(raw);
+        return new APIResponse(HttpStatus.OK.value(), artist);
     }
 
     @PostMapping
-    public ResponseEntity<Artist> insert(@RequestBody Artist artist) {
-        return ResponseEntity.ok().body(artistService.insert(artist));
+    @ResponseStatus(HttpStatus.CREATED)
+    public APIResponse insert(@RequestBody Artist artist) {
+        Artist raw = artistService.insert(artist);
+        ArtistDetailsResponseDTO insertedArtist = ArtistService.toArtistDetailsDTO(raw);
+        return new APIResponse(HttpStatus.CREATED.value(), insertedArtist);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Artist> update(@PathVariable Integer id, @RequestBody Artist artist) {
-        try {
-            return ResponseEntity.ok().body(artistService.update(id, artist));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse update(@PathVariable Integer id, @RequestBody Artist artist) {
+        Artist raw = artistService.update(id, artist);
+        if (raw == null) {
+            throw new ArtistNotFoundException();
         }
+
+        ArtistDetailsResponseDTO updatedArtist = ArtistService.toArtistDetailsDTO(raw);
+        return new APIResponse(HttpStatus.OK.value(), updatedArtist);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        try {
-            artistService.delete(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse delete(@PathVariable Integer id) {
+        artistService.delete(id);
+        return new APIResponse(HttpStatus.OK.value());
     }
 
     @PostMapping("/{id}/albums")
-    public ResponseEntity<Album> insertAlbum(@PathVariable Integer id, @RequestBody Album album) {
-        return ResponseEntity.ok().body(albumService.insert(id, album));
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse insertAlbum(@PathVariable Integer id, @RequestBody Album album) {
+        Album raw = albumService.insert(id, album);
+        if (raw == null) {
+            throw new ArtistNotFoundException();
+        }
+
+        AlbumDetailsResponseDTO insertedAlbum = AlbumService.toAlbumDetailsDTO(raw);
+        return new APIResponse(HttpStatus.OK.value(), insertedAlbum);
     }
 }

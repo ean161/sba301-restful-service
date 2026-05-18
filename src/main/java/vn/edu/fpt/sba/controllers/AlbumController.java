@@ -1,51 +1,66 @@
 package vn.edu.fpt.sba.controllers;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.sba.dto.responses.AlbumDetailsResponseDTO;
 import vn.edu.fpt.sba.dto.responses.AlbumResponseDTO;
+import vn.edu.fpt.sba.dto.responses.ArtistDetailsResponseDTO;
 import vn.edu.fpt.sba.dto.responses.ArtistResponseDTO;
 import vn.edu.fpt.sba.entities.Album;
-import vn.edu.fpt.sba.services.IAlbumService;
-import vn.edu.fpt.sba.services.IArtistService;
+import vn.edu.fpt.sba.entities.Artist;
+import vn.edu.fpt.sba.exceptions.AlbumNotFoundException;
+import vn.edu.fpt.sba.exceptions.ArtistNotFoundException;
+import vn.edu.fpt.sba.services.impl.AlbumService;
+import vn.edu.fpt.sba.utils.APIResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/albums")
 public class AlbumController {
 
-    private final IAlbumService albumService;
-    private final IArtistService artistService;
+    private final AlbumService albumService;
 
-    public AlbumController(IAlbumService albumService, IArtistService artistService) {
+    public AlbumController(AlbumService albumService) {
         this.albumService = albumService;
-        this.artistService = artistService;
     }
 
     @GetMapping
-    public List<AlbumResponseDTO> getAll() {
-        List<Album> albums = albumService.findAll();
-        List<AlbumResponseDTO> list = albums.stream().map(album -> {
-            return new AlbumResponseDTO(album.getId(), album.getTitle());
-        }).toList();
-        return list;
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse getAll() {
+        List<Album> raw = albumService.findAll();
+        List<AlbumResponseDTO> list = AlbumService.toAlbumDTOList(raw);
+        return new APIResponse(HttpStatus.OK.value(), list);
     }
 
     @GetMapping("/{id}")
-    public AlbumDetailsResponseDTO getById(@PathVariable Integer id) {
-        Album album = albumService.findById(id);
-        return new AlbumDetailsResponseDTO(
-                album.getId(),
-                album.getTitle(),
-                new ArtistResponseDTO(
-                        album.getArtist().getId(),
-                        album.getArtist().getName()
-                )
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse get(@PathVariable Integer id) {
+        Album raw = albumService.findById(id);
+        if (raw == null) {
+            throw new AlbumNotFoundException();
+        }
+
+        AlbumDetailsResponseDTO album = AlbumService.toAlbumDetailsDTO(raw);
+        return new APIResponse(HttpStatus.OK.value(), album);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse update(@PathVariable Integer id, @RequestBody Album album) {
+        Album raw = albumService.update(id, album);
+        if (raw == null) {
+            throw new AlbumNotFoundException();
+        }
+
+        AlbumDetailsResponseDTO updatedArtist = AlbumService.toAlbumDetailsDTO(raw);
+        return new APIResponse(HttpStatus.OK.value(), updatedArtist);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public APIResponse delete(@PathVariable Integer id) {
+        albumService.delete(id);
+        return new APIResponse(HttpStatus.OK.value());
     }
 }
