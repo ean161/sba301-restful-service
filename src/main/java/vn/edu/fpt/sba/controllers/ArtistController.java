@@ -28,61 +28,55 @@ public class ArtistController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse getAll() {
+    public ResponseEntity<APIResponse> getAll() {
         List<Artist> raw = artistService.findAll();
         List<ArtistResponseDTO> list = ArtistService.toArtistDTOList(raw);
-        return new APIResponse(HttpStatus.OK.value(), list);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), list));
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse get(@PathVariable Integer id) {
+    public ResponseEntity<APIResponse> get(@PathVariable Integer id) {
         Artist raw = artistService.findById(id);
         if (raw == null) {
             throw new ArtistNotFoundException();
         }
 
         ArtistDetailsResponseDTO artist = ArtistService.toArtistDetailsDTO(raw);
-        return new APIResponse(HttpStatus.OK.value(), artist);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), artist));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public APIResponse insert(@RequestBody Artist artist) {
+    public ResponseEntity<APIResponse> insert(@RequestBody Artist artist) {
         Artist raw = artistService.insert(artist);
         ArtistDetailsResponseDTO insertedArtist = ArtistService.toArtistDetailsDTO(raw);
-        return new APIResponse(HttpStatus.CREATED.value(), insertedArtist);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.CREATED.value(), insertedArtist));
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse update(@PathVariable Integer id, @RequestBody Artist artist) {
+    public ResponseEntity<APIResponse> update(@PathVariable Integer id, @RequestBody Artist artist) {
         Artist raw = artistService.update(id, artist);
         if (raw == null) {
             throw new ArtistNotFoundException();
         }
 
         ArtistDetailsResponseDTO updatedArtist = ArtistService.toArtistDetailsDTO(raw);
-        return new APIResponse(HttpStatus.OK.value(), updatedArtist);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), updatedArtist));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse delete(@PathVariable Integer id) {
+    public ResponseEntity<APIResponse> delete(@PathVariable Integer id) {
         artistService.delete(id);
-        return new APIResponse(HttpStatus.OK.value());
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value()));
     }
 
     @PostMapping("/{id}/albums")
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse insertAlbum(@PathVariable Integer id, @RequestBody Album album) {
+    public ResponseEntity<APIResponse> insertAlbum(@PathVariable Integer id, @RequestBody Album album) {
         Album raw = albumService.insert(id, album);
         if (raw == null) {
             throw new ArtistNotFoundException();
         }
 
         AlbumDetailsResponseDTO insertedAlbum = AlbumService.toAlbumDetailsDTO(raw);
-        return new APIResponse(HttpStatus.OK.value(), insertedAlbum);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), insertedAlbum));
     }
 }

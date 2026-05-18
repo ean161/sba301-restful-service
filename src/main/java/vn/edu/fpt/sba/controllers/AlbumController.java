@@ -1,6 +1,7 @@
 package vn.edu.fpt.sba.controllers;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.sba.dto.responses.AlbumDetailsResponseDTO;
 import vn.edu.fpt.sba.dto.responses.AlbumResponseDTO;
@@ -26,41 +27,37 @@ public class AlbumController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse getAll() {
+    public ResponseEntity<APIResponse> getAll() {
         List<Album> raw = albumService.findAll();
         List<AlbumResponseDTO> list = AlbumService.toAlbumDTOList(raw);
-        return new APIResponse(HttpStatus.OK.value(), list);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), list));
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse get(@PathVariable Integer id) {
+    public ResponseEntity<APIResponse> get(@PathVariable Integer id) {
         Album raw = albumService.findById(id);
         if (raw == null) {
             throw new AlbumNotFoundException();
         }
 
         AlbumDetailsResponseDTO album = AlbumService.toAlbumDetailsDTO(raw);
-        return new APIResponse(HttpStatus.OK.value(), album);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), album));
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse update(@PathVariable Integer id, @RequestBody Album album) {
+    public ResponseEntity<APIResponse> update(@PathVariable Integer id, @RequestBody Album album) {
         Album raw = albumService.update(id, album);
         if (raw == null) {
             throw new AlbumNotFoundException();
         }
 
         AlbumDetailsResponseDTO updatedArtist = AlbumService.toAlbumDetailsDTO(raw);
-        return new APIResponse(HttpStatus.OK.value(), updatedArtist);
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value(), updatedArtist));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public APIResponse delete(@PathVariable Integer id) {
+    public ResponseEntity<APIResponse> delete(@PathVariable Integer id) {
         albumService.delete(id);
-        return new APIResponse(HttpStatus.OK.value());
+        return ResponseEntity.ok(new APIResponse(HttpStatus.OK.value()));
     }
 }
