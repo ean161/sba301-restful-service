@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vn.edu.fpt.sba.exceptions.AlbumNotFoundException;
 import vn.edu.fpt.sba.exceptions.ArtistNotFoundException;
+import vn.edu.fpt.sba.exceptions.GenreNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -20,6 +21,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AlbumNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public APIResponse albumNotFoundException(AlbumNotFoundException ex) {
+        return new APIResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(GenreNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public APIResponse genreNotFoundException(GenreNotFoundException ex) {
         return new APIResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
     }
 }

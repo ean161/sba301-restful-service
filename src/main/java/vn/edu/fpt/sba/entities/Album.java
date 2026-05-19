@@ -13,13 +13,14 @@ public class Album {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "album_id")
+    @Column(name = "AlbumId")
     private Integer id;
 
+    @Column(name = "Title")
     private String title;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "artist_id")
+    @JoinColumn(name = "ArtistId")
     private Artist artist;
 }
