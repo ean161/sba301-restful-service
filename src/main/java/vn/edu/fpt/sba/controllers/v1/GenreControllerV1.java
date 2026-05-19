@@ -1,10 +1,9 @@
-package vn.edu.fpt.sba.controllers;
+package vn.edu.fpt.sba.controllers.v1;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.sba.dto.responses.GenreResponseDTO;
 import vn.edu.fpt.sba.entities.Genre;
@@ -12,16 +11,15 @@ import vn.edu.fpt.sba.exceptions.GenreNotFoundException;
 import vn.edu.fpt.sba.services.impl.GenreService;
 import vn.edu.fpt.sba.utils.APIResponse;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/genres")
-public class GenreController {
+@RequestMapping("/api/v1/genres")
+public class GenreControllerV1 {
 
     private final GenreService genreService;
 
-    public GenreController(GenreService genreService) {
+    public GenreControllerV1(GenreService genreService) {
         this.genreService = genreService;
     }
 

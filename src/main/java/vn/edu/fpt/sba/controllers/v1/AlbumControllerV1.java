@@ -1,4 +1,4 @@
-package vn.edu.fpt.sba.controllers;
+package vn.edu.fpt.sba.controllers.v1;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,25 +7,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.sba.dto.responses.AlbumDetailsResponseDTO;
 import vn.edu.fpt.sba.dto.responses.AlbumResponseDTO;
-import vn.edu.fpt.sba.dto.responses.ArtistDetailsResponseDTO;
-import vn.edu.fpt.sba.dto.responses.ArtistResponseDTO;
 import vn.edu.fpt.sba.entities.Album;
-import vn.edu.fpt.sba.entities.Artist;
 import vn.edu.fpt.sba.exceptions.AlbumNotFoundException;
-import vn.edu.fpt.sba.exceptions.ArtistNotFoundException;
 import vn.edu.fpt.sba.services.impl.AlbumService;
-import vn.edu.fpt.sba.services.impl.ArtistService;
 import vn.edu.fpt.sba.utils.APIResponse;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/albums")
-public class AlbumController {
+@RequestMapping("/api/v1/albums")
+public class AlbumControllerV1 {
 
     private final AlbumService albumService;
 
-    public AlbumController(AlbumService albumService) {
+    public AlbumControllerV1(AlbumService albumService) {
         this.albumService = albumService;
     }
 

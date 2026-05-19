@@ -1,4 +1,4 @@
-package vn.edu.fpt.sba.controllers;
+package vn.edu.fpt.sba.controllers.v1;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,14 +23,14 @@ import vn.edu.fpt.sba.utils.APIResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/artists")
+@RequestMapping("/api/v1/artists")
 @Tag(name = "Artist APIs", description = "APIs for artist management")
-public class ArtistController {
+public class ArtistControllerV1 {
 
     private final ArtistService artistService;
     private final AlbumService albumService;
 
-    public ArtistController(ArtistService artistService, AlbumService albumService) {
+    public ArtistControllerV1(ArtistService artistService, AlbumService albumService) {
         this.artistService = artistService;
         this.albumService = albumService;
     }
